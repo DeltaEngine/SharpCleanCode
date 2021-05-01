@@ -12,24 +12,26 @@ namespace BowlingGame
 			get
 			{
 				int sum = 0;
-				int roll = 0;
 				for (int frame = 0; frame < 10; frame++)
-				{
-					// Is Spare?
-					if (throws[roll] + throws[roll + 1] == 10)
-					{
-						sum += 10 + throws[roll];
-						roll += 2;
-					}
-					// TODO: Is Strike
-					else
-					{
-						sum += throws[roll] + throws[roll + 1];
-						roll += 2;
-					}
-				}
+					sum = Roll(sum);
 				return sum;
 			}
 		}
+
+		private int roll;
+
+		private int Roll(int sum)
+		{
+			if (IsSpare)
+				sum += 10 + throws[roll += 2];
+			else if (IsStrike)
+				sum += 10 + throws[++roll] + throws[roll + 1];
+			else
+				sum += throws[roll++] + throws[roll++];
+			return sum;
+		}
+
+		private bool IsSpare => throws[roll] + throws[roll + 1] == 10;
+		private bool IsStrike => throws[roll] == 10;
 	}
 }

@@ -45,12 +45,22 @@ namespace BowlingGame.Tests
 			RollMany(17, 0);
 			Assert.That(game.Score, Is.EqualTo(10 + 4 + 4));
 		}
-		/*
-If on his first try in the frame he knocks down all the pins, this is called a “strike”. His turn is over, and his score for the frame is ten plus the simple total of the pins knocked down in his next two rolls.
 		
-If in two tries, he fails to knock them all down, his score for that frame is the total number of pins knocked down in his two tries.
-
-If he gets a spare or strike in the last (tenth) frame, the bowler gets to throw one or two more bonus balls, respectively. These bonus throws are taken as part of the same turn. If the bonus throws knock down all the pins, the process does not repeat: the bonus throws are only used to calculate the score of the final frame.
-		 */
+		[Test]
+		public void Strike()
+		{
+			game.Throw(10);
+			game.Throw(4);
+			game.Throw(3);
+			RollMany(16, 0);
+			Assert.That(game.Score, Is.EqualTo(10 + 7 + 7));
+		}
+		
+		[Test]
+		public void PerfectGame()
+		{
+			RollMany(12, 10);
+			Assert.That(game.Score, Is.EqualTo(300));
+		}
 	}
 }
