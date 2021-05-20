@@ -2,7 +2,7 @@
 
 namespace EsoLanguages.Tests
 {
-	class SmallfuckTests
+	public class SmallfuckTests
 	{
 		[TestCase("00101100", "*", "10101100")]
 		[TestCase("00101100", ">*>*", "01001100")]
