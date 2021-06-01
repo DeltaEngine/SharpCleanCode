@@ -8,19 +8,39 @@ namespace EsoLanguages.Tests
 
 		[TestCase("*", 1, 1, 1, "1")]
 		[TestCase("////", 1, 1, 1, "0")]
-		[TestCase("*", 1, 2, 2, @"
+		[TestCase("*",
+			1,
+			2,
+			2,
+			@"
 10
 00")]
-		[TestCase("es*", 3, 2, 2, @"
+		[TestCase("es*",
+			3,
+			2,
+			2,
+			@"
 00
 01")]
-		[TestCase("wn*", 3, 2, 2, @"
+		[TestCase("wn*",
+			3,
+			2,
+			2,
+			@"
 00
 01")]
-		[TestCase(PaintP, 0, 2, 2, @"
+		[TestCase(PaintP,
+			0,
+			2,
+			2,
+			@"
 00
 00")]
-		[TestCase(PaintP, 7, 6, 9, @"
+		[TestCase(PaintP,
+			7,
+			6,
+			9,
+			@"
 111100
 000000
 000000
@@ -30,7 +50,11 @@ namespace EsoLanguages.Tests
 000000
 000000
 000000")]
-		[TestCase(PaintP, 100, 6, 9, @"
+		[TestCase(PaintP,
+			100,
+			6,
+			9,
+			@"
 111100
 100010
 100001
@@ -42,8 +66,10 @@ namespace EsoLanguages.Tests
 100000")]
 		[TestCase("*[e*]", 7, 4, 1, "1110")]
 		[TestCase("[*]", 7, 4, 1, "0000")]
+		// ReSharper disable once TooManyArguments
 		public void Calculate2DMap(string code, int iterations, int width, int height,
 			string expected) =>
-			Assert.That(PaintFuck.Interpret(code, iterations, width, height), Is.EqualTo(expected.TrimStart()));
+			Assert.That(PaintFuck.Interpret(code, iterations, width, height),
+				Is.EqualTo(expected.TrimStart()));
 	}
 }

@@ -1,31 +1,39 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace EsoLanguages
 {
-	public class Smallfuck
+	public class Boolfuck
 	{
-		public static string Interpreter(string code, string tape) =>
-			new Smallfuck(tape).Parse(code).Execute();
+		public static string Interpret(string code, string input) =>
+			new Boolfuck(input).Parse(code).Execute();
 
-		private Smallfuck(string tape)
+		private Boolfuck(string tape)
 		{
-			memory = new bool[tape.Length];
-			for (var index = 0; index < tape.Length; index++)
-				memory[index] = tape[index] == '1';
+			var inputBytes = tape.ToCharArray().Select(letter => (byte)letter).ToArray();
+			input = new BitArray(inputBytes);
+			memory = new BitArray(MemorySize);
+			pointerIndex = memory.Length / 2;
+			output = new BitArray(MemorySize);
 		}
 
-		private readonly bool[] memory;
+		private readonly BitArray input;
+		private const int MemorySize = 10000;
+		private readonly BitArray memory;
 		private int pointerIndex;
+		private readonly BitArray output;
 
-		private Smallfuck Parse(string code)
+		private Boolfuck Parse(string code)
 		{
 			foreach (var instruction in code)
 				instructions.Add(instruction switch
 				{
-					'>' => Instruction.MovePointerRight,
+					'+' => Instruction.Flip,
+					',' => Instruction.ReadBit,
+					';' => Instruction.OutputBit,
 					'<' => Instruction.MovePointerLeft,
-					'*' => Instruction.Flip,
+					'>' => Instruction.MovePointerRight,
 					'[' => Instruction.JumpOver,
 					']' => Instruction.JumpBack,
 					_ => Instruction.None
@@ -38,9 +46,11 @@ namespace EsoLanguages
 		private enum Instruction
 		{
 			None,
-			MovePointerRight,
-			MovePointerLeft,
 			Flip,
+			ReadBit,
+			OutputBit,
+			MovePointerLeft,
+			MovePointerRight,
 			JumpOver,
 			JumpBack
 		}
@@ -48,28 +58,32 @@ namespace EsoLanguages
 		private string Execute()
 		{
 			for (instructionIndex = 0; instructionIndex < instructions.Count; instructionIndex++)
-			{
 				ExecuteInstruction(instructions[instructionIndex]);
-				if (pointerIndex >= memory.Length || pointerIndex < 0)
-					break;
-			}
-			return new string(memory.Select(bit => bit
-				? '1'
-				: '0').ToArray());
+			var outputBytes = new byte[output.Length / 8];
+			output.CopyTo(outputBytes, 0);
+			return new string(outputBytes.Select(letter => (char)letter).
+				Take((outputLength + 7) / 8).ToArray());
 		}
 
+		// ReSharper disable once MethodTooLong
 		private void ExecuteInstruction(Instruction instruction)
 		{
 			switch (instruction)
 			{
-			case Instruction.MovePointerRight:
-				pointerIndex++;
+			case Instruction.Flip:
+				memory[pointerIndex] = !memory[pointerIndex];
+				break;
+			case Instruction.ReadBit:
+				memory[pointerIndex] = inputPosition < input.Length && input[inputPosition++];
+				break;
+			case Instruction.OutputBit:
+				output[outputLength++] = memory[pointerIndex];
 				break;
 			case Instruction.MovePointerLeft:
 				pointerIndex--;
 				break;
-			case Instruction.Flip:
-				memory[pointerIndex] = !memory[pointerIndex];
+			case Instruction.MovePointerRight:
+				pointerIndex++;
 				break;
 			case Instruction.JumpOver:
 				if (!memory[pointerIndex])
@@ -82,6 +96,8 @@ namespace EsoLanguages
 			}
 		}
 
+		private int inputPosition;
+		private int outputLength;
 		private int instructionIndex;
 
 		private void JumpToMatchingBracket(int direction)

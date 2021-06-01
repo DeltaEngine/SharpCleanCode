@@ -22,18 +22,18 @@ namespace EsoLanguages
 
 		private readonly List<Instruction> instructions = new List<Instruction>();
 
-		public enum Instruction
+		private enum Instruction
 		{
 			Increase,
 			Output
 		}
 
 		public class InvalidInstruction : Exception { }
-		
+
 		private string Execute()
 		{
 			byte memory = 0;
-			string result = "";
+			var result = "";
 			foreach (var instruction in instructions)
 				if (instruction == Instruction.Increase)
 					memory++;

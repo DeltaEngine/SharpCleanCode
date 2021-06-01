@@ -14,7 +14,7 @@ namespace EsoLanguages
 			this.height = height;
 			memory = new bool[height, width];
 		}
-		
+
 		private readonly int width;
 		private readonly int height;
 		private readonly bool[,] memory;
@@ -51,18 +51,18 @@ namespace EsoLanguages
 			JumpOver,
 			JumpBack
 		}
-		
+
 		private string Execute(int iterations)
 		{
-			int counter = 0;
+			var counter = 0;
 			instructions = instructions.Where(code => code != Instruction.None).ToList();
-			for (instructionIndex = 0;
-				instructionIndex < instructions.Count && counter < iterations;
+			for (instructionIndex = 0; instructionIndex < instructions.Count && counter < iterations;
 				instructionIndex++, counter++)
 				ExecuteInstruction(instructions[instructionIndex]);
 			return FormatOutput();
 		}
 
+		// ReSharper disable once MethodTooLong
 		private void ExecuteInstruction(Instruction instruction)
 		{
 			//Console.WriteLine(instruction+", pointerX="+pointerX+", pointerY="+pointerY);
@@ -102,7 +102,7 @@ namespace EsoLanguages
 
 		private void JumpToMatchingBracket(int direction)
 		{
-			int numberOfBrackets = direction;
+			var numberOfBrackets = direction;
 			for (instructionIndex += direction; instructionIndex >= 0; instructionIndex += direction)
 			{
 				if (instructions[instructionIndex] == Instruction.JumpBack)
@@ -117,11 +117,11 @@ namespace EsoLanguages
 		private string FormatOutput()
 		{
 			var result = "";
-			for (int y = 0; y < height; y++)
+			for (var y = 0; y < height; y++)
 			{
 				if (y > 0)
 					result += "\r\n";
-				for (int x = 0; x < width; x++)
+				for (var x = 0; x < width; x++)
 					result += memory[y, x]
 						? "1"
 						: "0";
